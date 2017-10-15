@@ -262,8 +262,7 @@ def load_data(image_paths, do_random_crop, do_random_flip, image_size, do_prewhi
             img = prewhiten(img)
         img = crop(img, do_random_crop, image_size)
         img = flip(img, do_random_flip)
-        #misc.imsave(str(i)+'.png',img)
-	images[i,:,:,:] = img
+        images[i,:,:,:] = img
     return images
 
 def get_label_batch(label_data, batch_size, batch_index):
