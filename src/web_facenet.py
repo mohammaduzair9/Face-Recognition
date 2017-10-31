@@ -20,10 +20,7 @@ find_dir='static/find_face/'
 render = web.template.render('./templates/')
 urls = ('/', 'index')
 	
-
-print("again")
 app = web.application(urls, globals())
-
 
 #initialize tensorflow grpah
 graph = tf.Graph()   
@@ -34,9 +31,6 @@ with graph.as_default():
         sess_config.gpu_options.per_process_gpu_memory_fraction = 0.90
         with tf.Session(config=sess_config) as sess:
 		
-		
-		
-            	
 		# Load the model
                 print('Loading feature extraction model')
             	facenet.load_model(model)
@@ -68,9 +62,15 @@ with graph.as_default():
         			        		f.write(content)
         	    	
     					#add face to database/numpy
+					global class_names 
+					global labels
+					global embeds
 					st = time.time()					
-					add_face.main(sess, graph, image_dir, class_names, labels, embeds)
- 					
+					updates=add_face.main(sess, graph, image_dir, class_names, labels, embeds)
+ 					class_names=updates[0]
+					labels=updates[1]
+					embeds=updates[2]
+					
 					faces=None
 					find_image=None
 					add_image=None
@@ -87,16 +87,20 @@ with graph.as_default():
         				
 					# find face name from database
 					st = time.time()
-					faces=find_face.main(sess, graph, target, class_names, labels, embeds)
+					face=find_face.main(sess, graph, target, class_names, labels, embeds)
 					print('Total time = {}'.format(time.time() - st))					
 					add_image=None
 					find_image=target
 					
-					 
+					# returning all found faces				
+					faces = ""
+					for i in range(face.size):
+						faces += (face[i]+ " ") 
 				return render.index(faces, add_image, find_image)
 
 if __name__=='__main__':
+
+	print('name again')
 	app.run()
 	
- 		
  		
