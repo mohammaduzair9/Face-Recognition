@@ -78,11 +78,16 @@ def main(sess, graph, target, class_names, labels, embeds):
 				face_x2=int(face_boundings[2])
 				face_y2=int(face_boundings[3])
             			
+				#face name text
+				cv2.putText(save_img, pred_face[i], (face_x1+10,face_y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 1)
 				print(pred_face[i])
            			print(' ')
             			print('Face Distance:')
             			print(dist_array[pred_array[i]][i])            
             			print(' ')
+
+						
+			cv2.imwrite(image_files[0],cv2.cvtColor(save_img, cv2.COLOR_RGB2BGR))
             
 	return pred_face
             
@@ -131,7 +136,12 @@ def load_and_align_data(image_paths, image_size, margin, gpu_memory_fraction):
 				face_x2=int(face_boundings[2])
 				face_y2=int(face_boundings[3])
 				
-				
+				#face box				
+				cv2.rectangle(save_img,(face_x1, face_y1), (face_x2, face_y2), ( 255, 0, 0), 2)
+				#face name box				
+				cv2.rectangle(save_img,(face_x1, face_y1-40), (face_x2, face_y1), (255, 0, 0), 2)
+				cv2.rectangle(save_img,(face_x1, face_y1-40), (face_x2, face_y1), (255, 0, 0), -1)
+			
 			for i, det in enumerate(det_arr):
                                 det = np.squeeze(det)
                                 bb = np.zeros(4, dtype=np.int32)
