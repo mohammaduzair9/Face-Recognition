@@ -11,10 +11,10 @@ The project is implemented in 3 phases:
   
 ## How to run
  
- Go to project directory and run the web_facenet.py stored in src folder.
-    'python file portNumber'
- Example :
-    'python src/web_facenet.py 1100'
+ Go to project directory and run the web_facenet.py stored in src folder.<br />
+    'python file portNumber'<br /><br />
+ Example :<br />
+    'python src/web_facenet.py 1100'<br />
     
  ## Credits
  
