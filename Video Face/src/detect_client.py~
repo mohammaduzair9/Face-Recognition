@@ -1,0 +1,70 @@
+
+'''
+Send JPEG image to tensorflow_model_server loaded with GAN model.
+
+Hint: the code has been compiled together with TensorFlow serving
+and not locally. The client is called in the TensorFlow Docker container
+'''
+
+from __future__ import print_function
+
+# Communication to TensorFlow server via gRPC
+from grpc.beta import implementations
+import tensorflow as tf
+
+from scipy import misc
+import tensorflow as tf
+import numpy as np
+import sys
+import time
+import os
+import cv2
+import facenet
+import align.detect_face
+
+
+# TensorFlow serving stuff to send messages
+from tensorflow_serving.apis import predict_pb2
+from tensorflow_serving.apis import prediction_service_pb2
+
+
+# Command line arguments
+tf.app.flags.DEFINE_string('server', 'localhost:9000',
+                           'PredictionService host:port')
+#tf.app.flags.DEFINE_string('image', '', 'path to image in JPEG format')
+FLAGS = tf.app.flags.FLAGS
+
+def load_and_align_data(image_paths, image_size, margin, gpu_memory_fraction):
+
+    img = misc.imread(os.path.expanduser(image_paths[0]))
+    return img
+
+def main(_):
+    	host, port = FLAGS.server.split(':')
+    	channel = implementations.insecure_channel(host, int(port))
+    	stub = prediction_service_pb2.beta_create_PredictionService_stub(channel)
+    	
+        request = predict_pb2.PredictRequest()
+	images = load_and_align_data(['static/find_face/4.jpg'], 160, 44, 0.9)
+	
+        request.model_spec.name = 'detect128'
+        request.model_spec.signature_name = 'calculate_boxes'
+        request.inputs['images'].CopyFrom(tf.contrib.util.make_tensor_proto(images, dtype=tf.float32))
+	tt=time.time()
+        result = stub.Predict(request, 60.0)  # 60 secs timeout
+	      
+	print("Detections Time:")
+	print(time.time()-tt)  
+	
+	results_dict = {}
+        for key in result.outputs:
+            tensor_proto = result.outputs[key]
+            nd_array = tf.contrib.util.make_ndarray(tensor_proto)
+            results_dict[key] = nd_array
+
+	bb=results_dict.get("boxes")
+	print(bb)
+
+
+if __name__ == '__main__':
+    tf.app.run()
