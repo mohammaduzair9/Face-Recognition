@@ -6,7 +6,7 @@ This is a facial recognition system on video.
 
 The project is implemented in 3 phases:
   1. Face Detection is done using MTCNN.
-  2. Face Alignmnet is done using MTCNN.
+  2. Face Alignment is done using MTCNN.
   3. Face Recognition is done using FaceNet.
   
 ## How to run
